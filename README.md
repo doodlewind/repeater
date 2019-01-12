@@ -113,4 +113,6 @@ UI is full of side effects. Repeater only records input events as data source, s
 ## License
 MIT
 
+---
+
 Code with ❤️ by Undefined FE team, Gaoding Inc. 2019.
