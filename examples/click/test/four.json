@@ -1,0 +1,70 @@
+{
+  "startTime": 1546830714855,
+  "viewport": {
+    "width": 212,
+    "height": 200
+  },
+  "url": "http://localhost:1234/",
+  "events": [
+    {
+      "ts": 1739,
+      "type": "mousedown",
+      "x": 63,
+      "y": 40
+    },
+    {
+      "ts": 1807,
+      "type": "mouseup",
+      "x": 63,
+      "y": 40
+    },
+    {
+      "ts": 2130,
+      "type": "mousedown",
+      "x": 50,
+      "y": 56
+    },
+    {
+      "ts": 2205,
+      "type": "mouseup",
+      "x": 50,
+      "y": 56
+    },
+    {
+      "ts": 2543,
+      "type": "mousedown",
+      "x": 74,
+      "y": 68
+    },
+    {
+      "ts": 2625,
+      "type": "mouseup",
+      "x": 74,
+      "y": 68
+    },
+    {
+      "ts": 2927,
+      "type": "mousedown",
+      "x": 69,
+      "y": 46
+    },
+    {
+      "ts": 3000,
+      "type": "mouseup",
+      "x": 69,
+      "y": 46
+    },
+    {
+      "ts": 3285,
+      "type": "mousedown",
+      "x": 58,
+      "y": 52
+    },
+    {
+      "ts": 3368,
+      "type": "mouseup",
+      "x": 58,
+      "y": 52
+    }
+  ]
+}

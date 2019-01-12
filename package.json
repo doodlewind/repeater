@@ -1,0 +1,29 @@
+{
+  "name": "repeater.js",
+  "version": "0.1.0",
+  "description": "Record browser events as visual test case.",
+  "main": "recorder/index.js",
+  "bin": {
+    "repeater": "replayer/repeater.js"
+  },
+  "keywords": [
+    "repeater",
+    "visual regression test",
+    "unit test"
+  ],
+  "author": "Yifeng Wang",
+  "license": "MIT",
+  "scripts": {
+    "poc": "repeater examples/click/test",
+    "example:click": "parcel examples/click/app/index.html"
+  },
+  "dependencies": {
+    "commander": "^2.19.0",
+    "generic-pool": "^3.4.2",
+    "glob": "^7.1.3",
+    "pixelmatch": "^4.0.2",
+    "pngjs": "^3.3.3",
+    "puppeteer-core": "^1.11.0",
+    "runtime-hooks": "1.0.0"
+  }
+}
