@@ -1,4 +1,4 @@
-import '../../../recorder'
+// import '../../../recorder'
 
 const $content = document.getElementById('content')
 let count = 0
