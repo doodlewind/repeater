@@ -1,24 +1,9 @@
 /* eslint-env browser */
 /* global chrome */
 
-function withHookBefore (originalFn, hookFn) {
-  return function () {
-    if (hookFn.apply(this, arguments) === false) {
-      return
-    }
-    return originalFn.apply(this, arguments)
-  }
-}
-
-function hookArgs (originalFn, argsGetter) {
-  return function () {
-    var _args = argsGetter.apply(this, arguments)
-    if (Array.isArray(_args)) {
-      for (var i = 0; i < _args.length; i++) arguments[i] = _args[i]
-    }
-    return originalFn.apply(this, arguments)
-  }
-}
+/*
+Setup global variables.
+*/
 
 let MOVE_RECORD_RANGE = 'drag'
 let THROTTLE_DRAG_MOVE = true
@@ -40,9 +25,30 @@ const log = {
   events: []
 }
 
-window.log = log
+/*
+Setup function deps.
+*/
 
-const hookEventListener = function () {
+function withHookBefore (originalFn, hookFn) {
+  return function () {
+    if (hookFn.apply(this, arguments) === false) {
+      return
+    }
+    return originalFn.apply(this, arguments)
+  }
+}
+
+function hookArgs (originalFn, argsGetter) {
+  return function () {
+    var _args = argsGetter.apply(this, arguments)
+    if (Array.isArray(_args)) {
+      for (var i = 0; i < _args.length; i++) arguments[i] = _args[i]
+    }
+    return originalFn.apply(this, arguments)
+  }
+}
+
+const hookEventListener = () => {
   EventTarget.prototype.addEventListener = hookArgs(
     EventTarget.prototype.addEventListener,
     function (type, listener, options) {
@@ -63,7 +69,7 @@ const hookEventListener = function () {
         } else {
           console.error(`${type} event unmatched`)
         }
-        console.log(type, 'hooked', window.log)
+        console.log(type, 'hooked')
       })
       if (hookEvents.includes(type)) return [type, hookedListener, options]
     }
@@ -84,7 +90,9 @@ const init = (throttleDragMove = false, range = 'drag') => {
   hookEvents.forEach(name => document.addEventListener(name, () => {}))
 }
 
-const getLog = () => {
+const getLog = log => {
+  log = JSON.parse(JSON.stringify(log))
+
   if (!log.events.length) return log
 
   const groupItem = (items, eq) => {
@@ -170,12 +178,20 @@ const getLog = () => {
   return log
 }
 
+/*
+Setup environments.
+*/
+
+window.log = log
 window.copyLog = getLog
 
-// Must be called first to init hook.
-// init()
+// Must be called first to init event hooks.
+init()
+
 if (chrome && chrome.runtime) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    sendResponse(getLog())
+    if (request.type === 'getLog') {
+      sendResponse(getLog(log))
+    }
   })
 }
