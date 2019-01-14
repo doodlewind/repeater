@@ -9,15 +9,14 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "background": {
-    "page": "background/index.html",
-    "persistent": true
-  },
   "browser_action": {
     "default_icon": "icons/icon-32.png",
     "default_title": "Record Events",
     "default_popup": "browser-action/index.html"
   },
+  "permissions": [
+    "activeTab"
+  ],
   "content_scripts": [
     {
       "matches": ["*://*/*"],

@@ -1,5 +1,5 @@
 /* eslint-env browser */
-// FIXME Use same code with recorder.
+/* global chrome */
 
 function withHookBefore (originalFn, hookFn) {
   return function () {
@@ -35,7 +35,6 @@ const hookEvents = [
 ]
 
 const log = {
-  startTime: null,
   viewport: { width: null, height: null },
   url: null,
   events: []
@@ -75,7 +74,6 @@ const hookEventListener = function () {
 const init = (throttleDragMove = false, range = 'drag') => {
   MOVE_RECORD_RANGE = range
   THROTTLE_DRAG_MOVE = throttleDragMove
-  log.startTime = +new Date()
   log.viewport = {
     width: window.innerWidth,
     height: window.innerHeight
@@ -86,7 +84,9 @@ const init = (throttleDragMove = false, range = 'drag') => {
   hookEvents.forEach(name => document.addEventListener(name, () => {}))
 }
 
-window.copyLog = () => {
+const getLog = () => {
+  if (!log.events.length) return log
+
   const groupItem = (items, eq) => {
     if (items.length === 0) return []
     const groups = [[items[0]]]
@@ -155,7 +155,7 @@ window.copyLog = () => {
         // TODO fine-grained throttle
         return group.length <= 2 ? group : [group[0], group[group.length - 1]]
       })
-      .reduce((a, b) => [...a, ...b])
+      .reduce((a, b) => [...a, ...b], [])
   }
 
   // Merge double click events, or else puppeteer can't simulate it.
@@ -167,7 +167,15 @@ window.copyLog = () => {
 
   // FIXME COMPAT copy support
   // copy(log)
+  return log
 }
+
+window.copyLog = getLog
 
 // Must be called first to init hook.
 // init()
+if (chrome && chrome.runtime) {
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    sendResponse(getLog())
+  })
+}
