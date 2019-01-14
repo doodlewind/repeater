@@ -1,5 +1,5 @@
 {
-  "name": "Repeater",
+  "name": "Repeater DevTool",
   "version": "0.0.1",
   "manifest_version": 2,
   "description": "User event stream recorder.",
@@ -10,19 +10,19 @@
     "128": "icons/icon-128.png"
   },
   "background": {
-    "page": "src/bg/index.html",
+    "page": "background/index.html",
     "persistent": true
   },
   "browser_action": {
     "default_icon": "icons/icon-32.png",
     "default_title": "Record Events",
-    "default_popup": "src/browser-action/index.html"
+    "default_popup": "browser-action/index.html"
   },
   "content_scripts": [
     {
       "matches": ["*://*/*"],
       "run_at": "document_start",
-      "js": ["src/inject/inject.js"]
+      "js": ["inject/index.js"]
     }
   ]
 }
