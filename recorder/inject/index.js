@@ -5,8 +5,11 @@
 Setup global variables.
 */
 
-let MOVE_RECORD_RANGE = 'drag'
-let THROTTLE_DRAG_MOVE = true
+const defaultOptions = {
+  enable: false,
+  ignoreIdleMove: true,
+  throttleDragMove: true
+}
 
 const hookEvents = [
   'mousedown',
@@ -76,10 +79,11 @@ const hookEventListener = () => {
   )
 }
 
-// eslint-disable-next-line
-const init = (throttleDragMove = false, range = 'drag') => {
-  MOVE_RECORD_RANGE = range
-  THROTTLE_DRAG_MOVE = throttleDragMove
+const initEventHook = () => {
+  const options = getOptions()
+  if (!options.enable) return
+  if (!window) return
+
   log.viewport = {
     width: window.innerWidth,
     height: window.innerHeight
@@ -90,8 +94,9 @@ const init = (throttleDragMove = false, range = 'drag') => {
   hookEvents.forEach(name => document.addEventListener(name, () => {}))
 }
 
-const getLog = log => {
+const extractLog = log => {
   log = JSON.parse(JSON.stringify(log))
+  const options = getOptions()
 
   if (!log.events.length) return log
 
@@ -109,6 +114,8 @@ const getLog = log => {
   }
 
   const mergeDoubleClick = (events = []) => {
+    if (!events.length) return []
+
     const results = []
     let i = 0
     while (true) {
@@ -134,7 +141,7 @@ const getLog = log => {
     return results
   }
 
-  if (MOVE_RECORD_RANGE === 'drag') {
+  if (options.ignoreIdleMove) {
     const filteredEvents = []
 
     let mousePressed = false
@@ -155,7 +162,7 @@ const getLog = log => {
     log.events = filteredEvents
   }
 
-  if (THROTTLE_DRAG_MOVE) {
+  if (options.throttleDragMove) {
     const groupedEvents = groupItem(log.events, (a, b) => a.type === b.type)
     log.events = groupedEvents
       .map(group => {
@@ -178,20 +185,44 @@ const getLog = log => {
   return log
 }
 
+const getOptions = () => JSON.parse(localStorage.repeaterOptions)
+
+const initOptions = () => {
+  if (!localStorage.repeaterOptions) {
+    localStorage.repeaterOptions = JSON.stringify(defaultOptions)
+    return
+  }
+
+  const options = getOptions()
+  // Ensure options reset on version change.
+  if (
+    Object.keys(options).some(option => !defaultOptions.includes(option)) ||
+    Object.keys(defaultOptions).some(option => !options.includes(option))
+  ) {
+    localStorage.repeaterOptions = JSON.stringify(defaultOptions)
+  }
+}
+
 /*
 Setup environments.
 */
-
-window.log = log
-window.copyLog = getLog
-
-// Must be called first to init event hooks.
-init()
+if (window) {
+  initOptions()
+  initEventHook()
+}
 
 if (chrome && chrome.runtime) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'getLog') {
-      sendResponse(getLog(log))
+      sendResponse(extractLog(log))
+    } else if (request.type === 'getOptions') {
+      sendResponse(localStorage.repeaterOptions)
     }
   })
+}
+
+if (typeof module === 'object') {
+  module.exports = {
+
+  }
 }
