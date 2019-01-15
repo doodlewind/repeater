@@ -185,9 +185,11 @@ const extractLog = log => {
   return log
 }
 
-const getOptions = () => localStorage.repeaterOptions
-  ? JSON.parse(localStorage.repeaterOptions)
-  : defaultOptions
+const getOptions = () => {
+  return localStorage.repeaterOptions
+    ? JSON.parse(localStorage.repeaterOptions)
+    : defaultOptions
+}
 
 const setOptions = options => {
   localStorage.repeaterOptions = JSON.stringify(options)
