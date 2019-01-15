@@ -187,19 +187,25 @@ const extractLog = log => {
 
 const getOptions = () => JSON.parse(localStorage.repeaterOptions)
 
+const setOptions = options => {
+  localStorage.repeaterOptions = JSON.stringify(options)
+}
+
 const initOptions = () => {
   if (!localStorage.repeaterOptions) {
-    localStorage.repeaterOptions = JSON.stringify(defaultOptions)
+    setOptions(defaultOptions)
     return
   }
 
   const options = getOptions()
+  const currentKeys = Object.keys(options)
+  const defaultKeys = Object.keys(options)
   // Ensure options reset on version change.
   if (
-    Object.keys(options).some(option => !defaultOptions.includes(option)) ||
-    Object.keys(defaultOptions).some(option => !options.includes(option))
+    currentKeys.some(key => !defaultKeys.includes(key)) ||
+    defaultKeys.some(key => !currentKeys.includes(key))
   ) {
-    localStorage.repeaterOptions = JSON.stringify(defaultOptions)
+    setOptions(defaultOptions)
   }
 }
 
@@ -216,7 +222,11 @@ if (chrome && chrome.runtime) {
     if (request.type === 'getLog') {
       sendResponse(extractLog(log))
     } else if (request.type === 'getOptions') {
-      sendResponse(localStorage.repeaterOptions)
+      sendResponse(getOptions())
+    } else if (request.type === 'setOptions') {
+      const options = getOptions()
+      setOptions({ ...options, ...request.data })
+      sendResponse(getOptions())
     }
   })
 }

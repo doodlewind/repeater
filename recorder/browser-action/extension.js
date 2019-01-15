@@ -7,20 +7,25 @@ const requestTab = (message, onResponse) => {
   })
 }
 
-const extractLog = () => {
-  requestTab({ type: 'getLog' }, response => {
+const getOptions = () => {
+  requestTab({ type: 'getOptions' }, response => {
     const $result = document.getElementById('result')
     $result.innerText = JSON.stringify(response)
   })
 }
 
 const init = () => {
-  const $logBtn = document.getElementById('get-log')
-  $logBtn.addEventListener('click', extractLog)
+  document.getElementById('get-log').addEventListener('click', () => {
+    requestTab({ type: 'getLog' }, response => {
+      const $result = document.getElementById('result')
+      $result.innerText = JSON.stringify(response)
+    })
+  })
 
-  const $optionsBtn = document.getElementById('get-options')
-  $optionsBtn.addEventListener('click', () => {
-    requestTab({ type: 'getOptions' }, response => {
+  document.getElementById('get-options').addEventListener('click', getOptions)
+
+  document.getElementById('enable').addEventListener('click', () => {
+    requestTab({ type: 'setOptions', data: { enable: true } }, response => {
       const $result = document.getElementById('result')
       $result.innerText = JSON.stringify(response)
     })
