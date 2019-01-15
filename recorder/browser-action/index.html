@@ -1,22 +1,49 @@
 <!doctype html>
 <style type="text/css">
 #main {
-	height: 200px;
-	width: 200px;
+	width: 150px;
+	height: 100px;
 	font-family: Helvetica, Ubuntu, Arial, sans-serif;
-}
-h1 {
-	font-size: 2em;
 }
 </style>
 
 <div id="main">
-<button id="get-log">Get Log</button>
-<br/>
-<button id="get-options">Get Options</button>
-<br/>
-<button id="enable">Enable</button>
-<div id="result"></div>
+	<form>
+		<!-- Radios -->
+		<input type="radio" id="switch-on" name="switch" value="1">
+		<label for="switch-on">ON</label>
+
+		<input type="radio" id="switch-off" name="switch" value="0">
+		<label for="switch-off">OFF</label>
+
+		<br/>
+		<br/>
+
+		<!-- Checkboxes -->
+		<input
+			type="checkbox"
+			id="ignore-idle-move"
+			name="ignore-idle-move"
+		/>
+		<label for="ignore-idle-move">
+			Ignore Idle Move
+		</label>
+		<br/>
+		<input
+			type="checkbox"
+			id="throttle-drag-move"
+			name="throttle-drag-move"
+		/>
+		<label for="throttle-drag-move">
+			Throttle Drag Move
+		</label>
+
+		<br/>
+		<br/>
+
+		<!-- Buttons -->
+		<button id="get-log">Copy Log</button>
+	</form>
 </div>
 
 <script src="extension.js"></script>
