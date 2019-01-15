@@ -1,6 +1,6 @@
 {
   "name": "repeater.js",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Record browser events as visual test case.",
   "main": "recorder/inject/index.js",
   "bin": {
@@ -10,6 +10,12 @@
     "repeater",
     "visual regression test",
     "unit test"
+  ],
+  "files": [
+    "recorder/inject/index.js",
+    "replayer",
+    "examples",
+    "*.md"
   ],
   "author": "Yifeng Wang",
   "license": "MIT",
