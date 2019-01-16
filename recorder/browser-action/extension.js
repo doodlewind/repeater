@@ -1,3 +1,4 @@
+/* eslint-env browser */
 /* global chrome */
 // Global context is the browser action popup.
 
@@ -57,6 +58,10 @@ const copyToClipboard = (text) => {
 
 const init = () => {
   getOptions(options => {
+    if (!options) {
+      console.warn('Please open new tab after extension reload!')
+      return
+    }
     // Init form options with tab state.
 
     document.querySelectorAll('input[name="switch"]').forEach($switch => {
@@ -77,11 +82,33 @@ const init = () => {
     })
   })
 
-  document.getElementById('get-log').onclick = () => {
+  document.getElementById('get-log').onclick = e => {
+    e.preventDefault()
     requestTab({ type: 'getLog' }, log => {
       copyToClipboard(JSON.stringify(log, null, 2))
     })
   }
+
+  document.getElementById('shot').addEventListener('click', e => {
+    e.preventDefault()
+    const options = { format: 'png', quality: 100 }
+    chrome.tabs.captureVisibleTab(null, options, dataURL => {
+      const image = new Image()
+      image.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = image.width
+        canvas.height = image.height
+        const context = canvas.getContext('2d')
+        context.drawImage(image, 0, 0)
+
+        const link = document.createElement('a')
+        link.download = 'screenshot.png'
+        link.href = canvas.toDataURL()
+        link.click()
+      }
+      image.src = dataURL
+    })
+  })
 }
 
 document.addEventListener('DOMContentLoaded', init)
