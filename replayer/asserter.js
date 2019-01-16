@@ -32,18 +32,19 @@ const testImage = (filePath, options) => new Promise((resolve, reject) => {
       { threshold: 0.1 }
     )
     const ratio = mismatchedPixels / (expectedImg.width * expectedImg.height)
+    const ratioStr = (ratio * 100).toFixed(2)
 
     const pass = ratio < options.diffThreshold / 100
 
     if (pass) {
-      console.log(`Test "${logName}" passed with ${ratio / 100}% difference.`)
+      console.log(`Test "${logName}" passed with ${ratioStr}% difference.`)
       resolve({ result: true, ratio })
     } else {
       const diffPath = join(process.cwd(), `./repeater/${logName}-diff.png`)
       diff.pack().pipe(fs.createWriteStream(diffPath))
         .on('finish', () => {
           console.error(
-            `Test failed with ${(ratio * 100).toFixed(2)}% difference.`
+            `Test "${logName}" failed with ${ratioStr}% difference.`
           )
           console.error(`See ./repeater/${logName}-diff.png for details.`)
           reject(new Error({ result: false, ratio }))
