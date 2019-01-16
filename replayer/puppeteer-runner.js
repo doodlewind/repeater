@@ -10,7 +10,7 @@ const {
 const wait = delay => new Promise(resolve => setTimeout(resolve, delay))
 
 const takeScreenshot = async (page, name) => {
-  const screenshotPath = join(process.cwd(), `./.repeater/${name}.png`)
+  const screenshotPath = join(process.cwd(), `./repeater/${name}.png`)
   await page.screenshot({ path: screenshotPath })
   console.log(`Screenshot for "${name}" is taken.`)
 }

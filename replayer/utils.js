@@ -6,7 +6,7 @@ const os = require('os')
 const batchUpdateScreenshot = jsonPaths => {
   const logNames = jsonPaths.map(getLogNameByPath)
   logNames.forEach((logName, i) => {
-    const screenshotPath = join(process.cwd(), './.repeater', `${logName}.png`)
+    const screenshotPath = join(process.cwd(), './repeater', `${logName}.png`)
     const distPath = jsonPaths[i].replace('.json', '.png')
     fs.copyFileSync(screenshotPath, distPath)
   })
@@ -17,7 +17,7 @@ const fileExists = filePath => {
 }
 
 const ensureRepeaterDir = () => {
-  const repeaterDir = join(process.cwd(), './.repeater')
+  const repeaterDir = join(process.cwd(), './repeater')
   if (!fs.existsSync(repeaterDir)) fs.mkdirSync(repeaterDir)
 }
 

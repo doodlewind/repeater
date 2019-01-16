@@ -21,6 +21,7 @@ With this idea we invent Repeater, enabling a fresh way adding test cases. Core 
 
 * Non-aggressive user events recording in browser, with a customizable events stream filter.
 * Batch testing based on image diff, which can be accurate to pixels. Image is more readable then complete DOM snapshot, and even smaller!
+* Opt-in passive mode, allowing you to make screenshots via API.
 * Works out of the box. We use your installed Chrome as host environment. No native dependencies, no binary bundles.
 * Automation ready. Repeater supports configurable resources pool for advanced usage in CI environment.
 
@@ -32,39 +33,75 @@ Install via NPM:
 npm install repeater.js
 ```
 
-Repeater is mainly composed of two parts: **Recorder** to collect user events, and **Replayer** for runing tests.
+The usage of Repeater mainly contains two parts: collecting user events, and replaying tests.
 
 ### Record Events
-To record events in existing project, include the script *before* any other modules:  
+To record events in existing project, just following these steps:
 
-``` js
-import 'repeater.js'
-import 'vue'
-// ...
+1. Open Repeater DevTool in your test page, click `ON` to enable recording.
+2. Play around in the test page.
+3. Click `Copy Log` to copy the events JSON, or `Screenshot` to save screenshot file.
+
+Then you can manage the test cases in this manner:
+
+``` text
+some/test
+├── foo.json
+├── foo.png
+├── bar.json
+├── bar.png
+├── baz.json
+└── baz.png
 ```
-
-Then after test page loaded, user events will be automatically recorded. To save a event log, open Chrome console and type `copyLog()`, then you can paste the result as JSON format.
-
-> Chrome extension WIP.
 
 ### Replay Tests
-Once event log saved, you can add screenshot with Repeater CLI:
-
-``` bash
-npx repeater path/to/log.json --update
-```
-
-This will take screenshot for you via [Puppeteer](https://github.com/GoogleChrome/puppeteer). To verify the test case, run:
+To verify one test case, use Repeater CLI:
 
 ``` bash
 npx repeater path/to/log.json
 ```
 
-Or batching tests:
+This will take and compare screenshot for you via [Puppeteer](https://github.com/GoogleChrome/puppeteer). Or else you can batching tests:
 
 ``` bash
 npx repeater path/to/tests
 ```
+
+In fact for each log, you don't have to save its screenshot manually. You can add or update existing screenshots with the `--update` flag:
+
+``` bash
+npx repeater path/to/log.json --update
+```
+
+### Passive Mode
+By default Repeater "actively" push events on replaying, and it doesn't need to be integrated in your code. However, if you simply want to ensure "static" render result, or if you don't have to perform complex operations in the page, we provide a passive mode for these tasks.
+
+In passive mode, Repeater "passively" listens for your invoking to its API, without triggering events. This mode doesn't require the browser extension. To get started, You can add a JSON test file in this format:
+
+``` json
+{
+  "viewport": {
+    "width": 400,
+    "height": 400
+  },
+  "url": "http://localhost:8080/some-test",
+  "mode": "passive"
+}
+```
+
+In the test page, use Repeater's API for screenshot:
+
+``` js
+import { screenshot } from 'repeater.js'
+
+// Render your canvas or so.
+// ...
+
+// Tell Puppeteer to take the screenshot.
+screenshot()
+```
+
+Then you can use same CLI managing test cases. On `repeater` command runs, screenshot will be taken when `screenshot()` invokes.
 
 
 ## API
@@ -85,7 +122,6 @@ Options:
 
 
 ## Roadmap
-* TODO record UI
 * TODO test coverage
 
 
@@ -95,6 +131,8 @@ Several points for better Repeater integration:
 * Build a "static" demo page for test, so that you can always get same render result with same inputs.
 * If multi test cases requires multi setup ways, you can simply identify them in demo page's URL and do the automation. **Don't Repeat Yourself.**
 * Use small browser window for screenshot. Smaller window size leads to significantly smaller screenshot size, and more sensitive image diff.
+* Use similar OS environment for testing. Render results among operating systems can vary, say text.
+* Add `./repeater` to `.gitignore`.
 
 
 ## Caveats

@@ -19,6 +19,7 @@
 
 * 无侵入性的浏览器事件录制，附带可定制的事件流过滤支持。
 * 像素级的视觉回归测试，支持批处理。图片比完整的 DOM 快照更可读，并且体积更小！
+* 可选的被动模式，由被测试代码调用 API 自动截图。
 * 真正开箱即用。我们默认复用你的系统上现成的 Chrome 作为宿主环境，无原生依赖，无二进制包。
 * 面向持续集成，支持可配置的资源池机制以便在 CI 环境中使用。
 
@@ -30,37 +31,76 @@
 npm install repeater.js
 ```
 
-Repeater 由两部分组成：收集用户事件的 **Recorder** 和回放测试用例的 **Replayer**。它们的使用是互相独立的。
+Repeater 的使用主要分两部分：收集用户事件与回放测试用例。
 
 ### 记录交互事件
-要想在已有的项目中记录事件，只需在项目中其他 JS 代码加载*之前*导入脚本：
+要想在已有的项目中记录事件，只需这么几步：
 
-``` js
-import 'repeater.js'
-import 'vue'
-// ...
+1. 在测试页面打开 Repeater DevTool，点击 `ON` 启用录制。
+2. 在页面里折腾。
+3. 点击 `Copy Log` 来复制事件 JSON 日志，或者点击 `Screenshot` 保存屏幕截图。
+
+而后即可按照这种结构管理测试用例了：
+
+``` text
+some/test
+├── foo.json
+├── foo.png
+├── bar.json
+├── bar.png
+├── baz.json
+└── baz.png
 ```
 
-页面加载完成后，用户事件将被自动记录。要想结束录制，打开 Chrome 控制台输入 `copyLog()`，将其粘贴为 JSON 格式文件即可。
-
-### 回放与测试
-录制了事件日志的 JSON 文件后，你可以使用 Repeater 的命令行来添加截图。
-
-``` bash
-npx repeater path/to/log.json --update
-```
-
-这会通过 [Puppeteer](https://github.com/GoogleChrome/puppeteer) 回放事件并截图。要想验证某个用例是否通过，只需这条命令：
+### 回放测试
+要想验证一个测试用例，使用 Repeater 的 CLI 命令：
 
 ``` bash
 npx repeater path/to/log.json
 ```
 
-还可以批量运行测试：
+这会通过 [Puppeteer](https://github.com/GoogleChrome/puppeteer) 回放事件并比较截图。你也可以批量运行测试：
 
 ``` bash
 npx repeater path/to/tests
 ```
+
+实际上，你并不必为每个 JSON 的用例文件手动保存截图，也可以通过 `--update` 参数来添加或更新已有用例的截图：
+
+``` bash
+npx repeater path/to/log.json --update
+```
+
+### 被动模式
+默认情况下 Repeater「主动地」在回放时向页面推送事件，它也不需要被集成到你的代码中。不过，如果你只想保证「静态」的渲染结构，或者不需要在页面中执行复杂的交互，这时你也可以使用被动模式。
+
+在被动模式中，Repeater「被动地」监听你对其 API 的调用，而不去触发事件。这个模式不需要浏览器扩展来记录事件。作为开始，可以按照这个格式添加 JSON 用例文件：
+
+``` json
+{
+  "viewport": {
+    "width": 400,
+    "height": 400
+  },
+  "url": "http://localhost:8080/some-test",
+  "mode": "passive"
+}
+```
+
+在测试页面中，使用 Repeater 的 API 来控制截图时机：
+
+``` js
+import { screenshot } from 'repeater.js'
+
+// 渲染 canvas 或其它复杂任务
+// ...
+
+// 告知 Puppeteer 截图
+screenshot()
+```
+
+而后即可使用相同的 CLI 管理测试用例了。在 `repeater` 命令运行时，页面中对 `screenshot()` 的调用会触发截图比对的过程。
+
 
 ## 最佳实践
 一些应用 Repeater 时的实践建议：
@@ -68,6 +108,8 @@ npx repeater path/to/tests
 * 可以为视觉测试提供单独的「静态」Demo 页，以便保证相同的输入总能渲染出相同的输出。
 * 如果多个测试用例需要不同的初始化过程，可以在 Demo 页的 URL 参数中做出一些区分，以便于自动化。**Don't Repeat Yourself.**
 * 使用较小的浏览器窗口来截图。窗口越小，截图尺寸显著更小，且图片比对的敏感度更高。
+* 使用相近的系统环境做测试。不同操作系统的渲染效果会有细微差别，如文本。
+* 添加 `./repeater` 到 `.gitignore` 中。
 
 
 ## 注意事项
