@@ -1,3 +1,4 @@
+// Please `npm run example:click` and install parcel before test.
 // import '../../../recorder'
 
 const $content = document.getElementById('content')

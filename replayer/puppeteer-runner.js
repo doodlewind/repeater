@@ -9,9 +9,15 @@ const {
 
 const wait = delay => new Promise(resolve => setTimeout(resolve, delay))
 
+const takeScreenshot = async (page, name) => {
+  const screenshotPath = join(process.cwd(), `./.repeater/${name}.png`)
+  await page.screenshot({ path: screenshotPath })
+  console.log(`Screenshot for "${name}" is taken.`)
+}
+
 // Run log JSON and save screenshot to repeater's tmp dir.
 // Logs can have multi window sizes, so fresh browser instance is required.
-const runLog = async (browser, log, name) => {
+const runActiveLog = async (browser, log, name) => {
   const [width, height] = [log.viewport.width, log.viewport.height]
   const page = await browser.newPage()
   await page.setViewport({ width, height })
@@ -50,9 +56,33 @@ const runLog = async (browser, log, name) => {
       await page.keyboard.up(code)
     }
   }
-  const screenshotPath = join(process.cwd(), `./.repeater/${name}.png`)
-  await page.screenshot({ path: screenshotPath })
-  console.log(`Screenshot for "${name}" is taken.`)
+  await takeScreenshot(page, name)
+}
+
+const runPassiveLog = async (browser, log, name) => {
+  const [width, height] = [log.viewport.width, log.viewport.height]
+  const page = await browser.newPage()
+  await page.setViewport({ width, height })
+  await page.goto(log.url)
+
+  await page.evaluate(() => {
+    return new Promise((resolve, reject) => {
+      if (window.hasRepeaterScreenshot) {
+        resolve()
+        return
+      }
+
+      window.addEventListener('repeater-screenshot', () => resolve())
+    })
+  })
+
+  await takeScreenshot(page, name)
+}
+
+const runLog = async (browser, log, name) => {
+  const isPassive = log.mode && log.mode === 'passive'
+  if (isPassive) await runPassiveLog(browser, log, name)
+  else await runActiveLog(browser, log, name)
 }
 
 const createChromePool = async (userOptions) => {

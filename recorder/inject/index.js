@@ -25,6 +25,7 @@ const hookEvents = [
 const log = {
   viewport: { width: null, height: null },
   url: null,
+  mode: 'active',
   events: []
 }
 

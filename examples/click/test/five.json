@@ -1,10 +1,10 @@
 {
-  "startTime": 1546830714855,
   "viewport": {
     "width": 212,
     "height": 200
   },
   "url": "http://localhost:1234/",
+  "mode": "active",
   "events": [
     {
       "ts": 1739,

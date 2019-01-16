@@ -2,11 +2,12 @@
   "name": "repeater.js",
   "version": "0.2.0",
   "description": "Record browser events as visual test case.",
-  "main": "recorder/inject/index.js",
+  "main": "index.js",
   "bin": {
     "repeater": "replayer/repeater.js"
   },
   "keywords": [
+    "recorder",
     "repeater",
     "visual regression test",
     "unit test"
@@ -21,7 +22,8 @@
   "license": "MIT",
   "scripts": {
     "poc": "repeater examples/click/test",
-    "example:click": "parcel examples/click/app/index.html"
+    "example:click": "parcel examples/click/app/index.html",
+    "example:canvas": "parcel examples/canvas/app/index.html"
   },
   "dependencies": {
     "commander": "^2.19.0",
