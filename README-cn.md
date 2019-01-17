@@ -1,6 +1,7 @@
 # Repeater 复读机
 📼 基于浏览器事件录制的视觉测试工具。
 
+![repeater-demo](https://dancf-st-gdx.oss-cn-hangzhou.aliyuncs.com/gaoding/20190117-154645984-1627f2.gif)
 
 ## 介绍
 测试大型 Web 项目时有这些痛点：

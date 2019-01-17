@@ -3,6 +3,7 @@
 
 [中文介绍](./README-cn.md)
 
+![repeater-demo](https://dancf-st-gdx.oss-cn-hangzhou.aliyuncs.com/gaoding/20190117-154645984-1627f2.gif)
 
 ## Introduction
 There're several pain points testing large web apps:
