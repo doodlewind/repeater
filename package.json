@@ -1,6 +1,6 @@
 {
   "name": "repeater.js",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Record browser events as visual test case.",
   "main": "index.js",
   "bin": {
