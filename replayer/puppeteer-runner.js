@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer-core')
 const { join } = require('path')
 const genericPool = require('generic-pool')
+const fs = require('fs-extra');
 const {
   ensureRepeaterDir,
   getJSONByPath,
@@ -13,6 +14,20 @@ const takeScreenshot = async (page, name) => {
   const screenshotPath = join(process.cwd(), `./repeater/${name}.png`)
   await page.screenshot({ path: screenshotPath })
   console.log(`Screenshot for "${name}" is taken.`)
+}
+
+const writeCoverage = async (page) => {
+  const coverageStore = await page.evaluate(() => window.__coverage__)
+  await fs.emptyDir('.nyc_output');
+  await Promise.all(
+    Object.values(coverageStore).map(coverage => {
+      if (coverage) {
+        return fs.writeJson(`.nyc_output/${coverage.hash}.json`, { [coverage.path]: coverage })
+      }
+
+      return Promise.resolve()
+    })
+  )
 }
 
 // Run log JSON and save screenshot to repeater's tmp dir.
@@ -122,6 +137,7 @@ const batchRun = async (filePaths, userOptions) => {
     global.chromeHeight = log.viewport.height
     global.chromePool.acquire().then(async (browser) => {
       await runLog(browser, log, getLogNameByPath(filePaths[i]))
+      await writeCoverage(browser.pages()[0]);
       await global.chromePool.destroy(browser)
       resolve()
     })
