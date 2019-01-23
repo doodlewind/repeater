@@ -41,6 +41,8 @@ Repeater 的使用主要分两部分：收集用户事件与回放测试用例�
 2. 在页面里折腾。
 3. 点击 `Copy Log` 来复制事件 JSON 日志，或者点击 `Screenshot` 保存屏幕截图。
 
+> 截图并不必手动保存。你可以在保存日志后，使用 `repeater --update` 批量更新截图。
+
 而后即可按照这种结构管理测试用例了：
 
 ``` text
@@ -52,6 +54,16 @@ some/test
 ├── baz.json
 └── baz.png
 ```
+
+Repeater 还提供了一些**可选的**辅助功能以便于提高录制效率。在测试页面，你可以导入 Repeater 的辅助函数：
+
+``` js
+import { initHelpers } from 'repeater.js'
+
+initHelpers()
+```
+
+而后要想复制日志，只需打开页面的开发者工具，在控制台中输入 `copyLog()` 即可。
 
 ### 回放测试
 要想验证一个测试用例，使用 Repeater 的 CLI 命令：
@@ -101,6 +113,16 @@ screenshot()
 ```
 
 而后即可使用相同的 CLI 管理测试用例了。在 `repeater` 命令运行时，页面中对 `screenshot()` 的调用会触发截图比对的过程。
+
+
+## 测试覆盖率
+目前如果需要测试覆盖率数据，大致需要在待测试的项目中配置这些步骤：
+
+1. 安装 `babel-plugin-istanbul` 与 `nyc`。
+2. 使用 Repeater 执行测试。
+3. 使用 `npx nyc report --reporter=html` 获得覆盖率报告。
+
+> 只要覆盖率数据存在，Repeater 就会将其写入 `./nyc_output` 目录下。
 
 
 ## 最佳实践

@@ -43,6 +43,8 @@ To record events in existing project, just following these steps:
 2. Play around in the test page.
 3. Click `Copy Log` to copy the events JSON, or `Screenshot` to save screenshot file.
 
+> Screenshots are not required to be manually saved. You can save the logs and use `repeater --update`, saving screenshot automatically.
+
 Then you can manage the test cases in this manner:
 
 ``` text
@@ -54,6 +56,16 @@ some/test
 ├── baz.json
 └── baz.png
 ```
+
+Repeater provides some **opt-in** helpers for more efficient recording. In the test page, you can import Repeater's helpers:
+
+``` js
+import { initHelpers } from 'repeater.js'
+
+initHelpers()
+```
+
+Then to copy log, you can simply open deverloper tool and run `copyLog()` in the console.
 
 ### Replay Tests
 To verify one test case, use Repeater CLI:
@@ -122,8 +134,14 @@ Options:
 ```
 
 
-## Roadmap
-* TODO test coverage
+## Test Coverage
+For now to collect coverage data, you'll need following steps in your project briefly:
+
+1. Add `babel-plugin-istanbul` and `nyc`.
+2. Run tests via Repeater.
+3. Run `npx nyc report --reporter=html` for coverage report.
+
+> Repeater will write coverage data into `./.nyc_output` as long as coverage data exists. 
 
 
 ## Best Practises
