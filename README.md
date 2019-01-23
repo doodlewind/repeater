@@ -135,7 +135,7 @@ Options:
 
 
 ## Test Coverage
-For now to collect coverage data, you'll need following steps in your project briefly:
+For now to collect coverage data, you'll need to follow these steps in your project briefly:
 
 1. Add `babel-plugin-istanbul` and `nyc`.
 2. Run tests via Repeater.
