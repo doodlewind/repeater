@@ -26,7 +26,7 @@
 
 
 ## 使用
-由 NPM 安装：
+添加 [Chrome 插件](https://chrome.google.com/webstore/detail/repeater-devtool/dapkdlecchiilehdieohlodhmjpehbcd) 或由 NPM 安装：
 
 ``` bash
 npm install repeater.js
@@ -37,7 +37,7 @@ Repeater 的使用主要分两部分：收集用户事件与回放测试用例�
 ### 记录交互事件
 要想在已有的项目中记录事件，只需这么几步：
 
-1. 在测试页面打开 Repeater DevTool，点击 `ON` 启用录制。
+1. 在测试页面打开 [Repeater DevTool](https://chrome.google.com/webstore/detail/repeater-devtool/dapkdlecchiilehdieohlodhmjpehbcd)，点击 `ON` 启用录制。
 2. 在页面里折腾。
 3. 点击 `Copy Log` 来复制事件 JSON 日志，或者点击 `Screenshot` 保存屏幕截图。
 
@@ -138,7 +138,7 @@ screenshot()
 ## 注意事项
 
 ### 滚动事件
-Chrome 对滚动有非常特殊的优化处理，Puppeteer 目前也没有 first-class 的 API 实现该控制。这导致了滚动行为在回放上的困难。
+Chrome 对滚动有非常特殊的底层优化处理，Puppeteer 目前也没有 first-class 的 API 实现该控制。这导致了滚动行为在回放上的困难。
 
 ### 外部状态
 UI 是充满副作用的。Repeater 只将用户输入事件作为唯一的数据源，因此你需要尽量确保外部状态的稳定。并且，这里也有一些限制。例如：

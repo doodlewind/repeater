@@ -28,7 +28,7 @@ With this idea we invent Repeater, enabling a fresh way adding test cases. Core 
 
 
 ## Usage
-Install via NPM:
+Install [Chrome Extension](https://chrome.google.com/webstore/detail/repeater-devtool/dapkdlecchiilehdieohlodhmjpehbcd) or NPM package:
 
 ``` bash
 npm install repeater.js
@@ -39,7 +39,7 @@ The usage of Repeater mainly contains two parts: collecting user events, and rep
 ### Record Events
 To record events in existing project, just following these steps:
 
-1. Open Repeater DevTool in your test page, click `ON` to enable recording.
+1. Open [Repeater DevTool](https://chrome.google.com/webstore/detail/repeater-devtool/dapkdlecchiilehdieohlodhmjpehbcd) in your test page, click `ON` to enable recording.
 2. Play around in the test page.
 3. Click `Copy Log` to copy the events JSON, or `Screenshot` to save screenshot file.
 
