@@ -77,7 +77,7 @@ const getJSONByPath = jsonPath => JSON.parse(fs.readFileSync(jsonPath, 'utf8'))
 const getLogNameByPath = filePath => basename(filePath).replace('.json', '')
 
 const writeJSON = (path, json) => new Promise((resolve, reject) => {
-  fs.writeFile(path, JSON.stringify(json), (err) => {
+  fs.writeFile(join(process.cwd(), path), JSON.stringify(json), (err) => {
     if (err) reject(err)
     resolve()
   })
@@ -85,16 +85,16 @@ const writeJSON = (path, json) => new Promise((resolve, reject) => {
 
 const writeCoverage = async page => {
   const coverageStore = await page.evaluate(() => window.__coverage__)
-  ensureDir('./.nyc_output')
 
   if (!coverageStore) return
 
+  ensureDir('./.nyc_output')
   await Promise.all(
     Object.values(coverageStore).map(coverage => {
       console.log(coverageStore)
       if (coverage) {
         return writeJSON(
-          `.nyc_output/${coverage.hash}.json`, { [coverage.path]: coverage }
+          `./.nyc_output/${coverage.hash}.json`, { [coverage.path]: coverage }
         )
       }
 
