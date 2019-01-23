@@ -6,7 +6,7 @@ const os = require('os')
 const batchUpdateScreenshot = jsonPaths => {
   const logNames = jsonPaths.map(getLogNameByPath)
   logNames.forEach((logName, i) => {
-    const screenshotPath = join(process.cwd(), './repeater', `${logName}.png`)
+    const screenshotPath = join(process.cwd(), './.repeater', `${logName}.png`)
     const distPath = jsonPaths[i].replace('.json', '.png')
     fs.copyFileSync(screenshotPath, distPath)
   })
@@ -16,9 +16,9 @@ const fileExists = filePath => {
   try { return fs.statSync(filePath).isFile() } catch (err) { return false }
 }
 
-const ensureRepeaterDir = () => {
-  const repeaterDir = join(process.cwd(), './repeater')
-  if (!fs.existsSync(repeaterDir)) fs.mkdirSync(repeaterDir)
+const ensureDir = dirName => {
+  const dirPath = join(process.cwd(), dirName)
+  if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath)
 }
 
 const getActionByJSON = (name, update) => {
@@ -76,11 +76,39 @@ const getJSONByPath = jsonPath => JSON.parse(fs.readFileSync(jsonPath, 'utf8'))
 
 const getLogNameByPath = filePath => basename(filePath).replace('.json', '')
 
+const writeJSON = (path, json) => new Promise((resolve, reject) => {
+  fs.writeFile(path, JSON.stringify(json), (err) => {
+    if (err) reject(err)
+    resolve()
+  })
+})
+
+const writeCoverage = async page => {
+  const coverageStore = await page.evaluate(() => window.__coverage__)
+  ensureDir('./.nyc_output')
+
+  if (!coverageStore) return
+
+  await Promise.all(
+    Object.values(coverageStore).map(coverage => {
+      console.log(coverageStore)
+      if (coverage) {
+        return writeJSON(
+          `.nyc_output/${coverage.hash}.json`, { [coverage.path]: coverage }
+        )
+      }
+
+      return Promise.resolve()
+    })
+  )
+}
+
 module.exports = {
   batchUpdateScreenshot,
-  ensureRepeaterDir,
+  ensureDir,
   getActionByLocation,
   getDefaultChromiumPath,
   getJSONByPath,
-  getLogNameByPath
+  getLogNameByPath,
+  writeCoverage
 }

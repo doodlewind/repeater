@@ -1,33 +1,19 @@
 const puppeteer = require('puppeteer-core')
 const { join } = require('path')
 const genericPool = require('generic-pool')
-const fs = require('fs-extra');
 const {
-  ensureRepeaterDir,
+  ensureDir,
   getJSONByPath,
-  getLogNameByPath
+  getLogNameByPath,
+  writeCoverage
 } = require('./utils')
 
 const wait = delay => new Promise(resolve => setTimeout(resolve, delay))
 
 const takeScreenshot = async (page, name) => {
-  const screenshotPath = join(process.cwd(), `./repeater/${name}.png`)
+  const screenshotPath = join(process.cwd(), `./.repeater/${name}.png`)
   await page.screenshot({ path: screenshotPath })
   console.log(`Screenshot for "${name}" is taken.`)
-}
-
-const writeCoverage = async (page) => {
-  const coverageStore = await page.evaluate(() => window.__coverage__)
-  await fs.emptyDir('.nyc_output');
-  await Promise.all(
-    Object.values(coverageStore).map(coverage => {
-      if (coverage) {
-        return fs.writeJson(`.nyc_output/${coverage.hash}.json`, { [coverage.path]: coverage })
-      }
-
-      return Promise.resolve()
-    })
-  )
 }
 
 // Run log JSON and save screenshot to repeater's tmp dir.
@@ -72,6 +58,7 @@ const runActiveLog = async (browser, log, name) => {
     }
   }
   await takeScreenshot(page, name)
+  await writeCoverage(page)
 }
 
 const runPassiveLog = async (browser, log, name) => {
@@ -90,8 +77,8 @@ const runPassiveLog = async (browser, log, name) => {
       window.addEventListener('repeater-screenshot', () => resolve())
     })
   })
-
   await takeScreenshot(page, name)
+  await writeCoverage(page)
 }
 
 const runLog = async (browser, log, name) => {
@@ -129,7 +116,7 @@ const destroyChromePool = async () => {
 }
 
 const batchRun = async (filePaths, userOptions) => {
-  ensureRepeaterDir()
+  ensureDir('./.repeater')
   const logs = filePaths.map(getJSONByPath)
   await createChromePool(userOptions)
   const promises = logs.map((log, i) => new Promise((resolve, reject) => {
@@ -137,7 +124,6 @@ const batchRun = async (filePaths, userOptions) => {
     global.chromeHeight = log.viewport.height
     global.chromePool.acquire().then(async (browser) => {
       await runLog(browser, log, getLogNameByPath(filePaths[i]))
-      await writeCoverage(browser.pages()[0]);
       await global.chromePool.destroy(browser)
       resolve()
     })

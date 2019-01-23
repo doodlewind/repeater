@@ -8,7 +8,7 @@ const {
 
 const testImage = (filePath, options) => new Promise((resolve, reject) => {
   const logName = getLogNameByPath(filePath)
-  const expectedPath = join(process.cwd(), './repeater', `${logName}.png`)
+  const expectedPath = join(process.cwd(), './.repeater', `${logName}.png`)
   const expectedImg = fs
     .createReadStream(expectedPath).pipe(new PNG()).on('parsed', doneReading)
 
@@ -40,13 +40,13 @@ const testImage = (filePath, options) => new Promise((resolve, reject) => {
       console.log(`Test "${logName}" passed with ${ratioStr}% difference.`)
       resolve({ result: true, ratio })
     } else {
-      const diffPath = join(process.cwd(), `./repeater/${logName}-diff.png`)
+      const diffPath = join(process.cwd(), `./.repeater/${logName}-diff.png`)
       diff.pack().pipe(fs.createWriteStream(diffPath))
         .on('finish', () => {
           console.error(
             `Test "${logName}" failed with ${ratioStr}% difference.`
           )
-          console.error(`See ./repeater/${logName}-diff.png for details.`)
+          console.error(`See ./.repeater/${logName}-diff.png for details.`)
           reject(new Error({ result: false, ratio }))
         })
         .on('error', reject)

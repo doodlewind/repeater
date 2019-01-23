@@ -133,7 +133,7 @@ Several points for better Repeater integration:
 * If multi test cases requires multi setup ways, you can simply identify them in demo page's URL and do the automation. **Don't Repeat Yourself.**
 * Use small browser window for screenshot. Smaller window size leads to significantly smaller screenshot size, and more sensitive image diff.
 * Use similar OS environment for testing. Render results among operating systems can vary, say text.
-* Add `./repeater` to `.gitignore`.
+* Add `./.repeater` to `.gitignore`.
 
 
 ## Caveats
