@@ -181,8 +181,6 @@ const extractLog = log => {
   // Minify float timestamp number (in miliseconds).
   log.events.forEach(x => { x.ts = parseInt(x.ts) })
 
-  // FIXME COMPAT copy support
-  // copy(log)
   return log
 }
 
@@ -209,12 +207,22 @@ const initOptions = () => {
   }
 }
 
+const initHelpers = () => {
+  addEventListener('repeater-extract-log', () => {
+    const event = new CustomEvent('repeater-copy-log', {
+      detail: extractLog(log)
+    })
+    dispatchEvent(event)
+  })
+}
+
 /*
 Setup environments.
 */
 if (window) {
   initOptions()
   initEventHook()
+  initHelpers()
 }
 
 if (chrome && chrome.runtime) {

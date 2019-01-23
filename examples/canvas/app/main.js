@@ -1,5 +1,7 @@
 // Please `npm run example:canvas` and install parcel before test.
-import { screenshot } from '../../../index'
+import { screenshot, initHelpers } from '../../../index'
+
+initHelpers()
 
 const draw = () => {
   const canvas = document.getElementById('canvas')
