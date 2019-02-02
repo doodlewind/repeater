@@ -91,7 +91,6 @@ const writeCoverage = async page => {
   ensureDir('./.nyc_output')
   await Promise.all(
     Object.values(coverageStore).map(coverage => {
-      console.log(coverageStore)
       if (coverage) {
         return writeJSON(
           `./.nyc_output/${coverage.hash}.json`, { [coverage.path]: coverage }
